@@ -1,17 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, 
   Text, 
   Image, 
   ImageBackground, 
   StyleSheet,
   TextInput,
-  Button,
   Pressable,
-  ColorPropType
+  TouchableOpacity
 } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 import { icons, images, COLORS, FONTS, SIZES } from '../constants';
 
 export default function SignIn() {
+
+  const [userName, setUserName] = useState('');
+  const [password, setPassWord] = useState(''); 
+  const [activeSignIn, setActiveSignIn] = useState(false);
+  const [isValidUser, setisValidUser] = useState('');
+  const [isValidPassword, setisValidPassword] = useState('');
+
+  useEffect(()=>{
+    if(userName && password) {
+      setActiveSignIn(true);
+    }
+    else {
+      setActiveSignIn(false);
+    }
+  }, [userName, password]);
 
   const renderLogo = () => {
     return (
@@ -35,6 +50,26 @@ export default function SignIn() {
   }
 
   const renderUsernamePassword = () => {
+    const handleValidUser = (val) => {
+      if(val.length < 3) {
+        setisValidUser('*Username must be at least 3 characters')
+      }else if (!val.match(/^[a-zA-Z0-9]+$/)) {
+        setisValidUser('*Only characters A-Z, a-z and 0-9')
+      }
+      else {
+        setisValidUser('');
+      }
+    }
+
+    const hanldeValidPassword = (val) => {
+      if(val.length < 4) {
+        setisValidPassword('*Password must be at least 4 characters')
+      }
+      else {
+        setisValidPassword('');
+      }
+    }
+
     return (
       <View
         style={{
@@ -56,7 +91,7 @@ export default function SignIn() {
             borderTopWidth: 0,
             borderRightWidth: 0,
             borderLeftWidth: 0,
-            marginBottom: 15
+            // marginBottom: 15
           }}
         >
           <TextInput
@@ -65,6 +100,8 @@ export default function SignIn() {
             placeholderTextColor="#695599"
             maxLength={12}
             underlineColorAndroid="transparent"
+            onChangeText={text => setUserName(text)}
+            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
           />
           <Image
             source={icons.profile_signin}
@@ -75,10 +112,14 @@ export default function SignIn() {
               tintColor: COLORS.purpleLight,
               height: '100%',
               bottom: 0,
-        
             }}
           />
         </View>
+        {isValidUser=='' ? null :   
+          <Animatable.View animation="fadeInLeft" duration={800}>
+            <Text style={styles.errMsg}>{isValidUser}</Text>
+          </Animatable.View>
+        }
 
         <View
           style={{
@@ -92,7 +133,7 @@ export default function SignIn() {
             borderTopWidth: 0,
             borderRightWidth: 0,
             borderLeftWidth: 0,
-            marginBottom: 15
+            marginTop: 15
           }}
         >
           <TextInput
@@ -101,6 +142,8 @@ export default function SignIn() {
             placeholderTextColor="#695599"
             secureTextEntry={true}
             maxLength={8}
+            onChangeText={text => setPassWord(text)}
+            onEndEditing={(e) => hanldeValidPassword(e.nativeEvent.text)}
           />
           <Image
             source={icons.lock}
@@ -115,6 +158,12 @@ export default function SignIn() {
             }}
           />
         </View>
+        {isValidPassword=='' ? null :   
+          <Animatable.View animation="fadeInLeft" duration={800}>
+            <Text style={styles.errMsg}>{isValidPassword}</Text>
+          </Animatable.View>
+        }
+        
 
         <View
           style={{
@@ -122,35 +171,39 @@ export default function SignIn() {
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginBottom: 15,
-            marginTop: 15
+            marginTop: 30
           }}
         >
-           <Pressable
+           <TouchableOpacity
             style={styles.button}
+            
            >
              <Text
               style={styles.textActive}
              >Sign up</Text>
-           </Pressable>
+           </TouchableOpacity>
 
-           <Pressable
+           <TouchableOpacity
             style={styles.button}
            >
              <Text
-              style={styles.text}
+              style={(activeSignIn) ? styles.textActive : styles.text}
              >Sign in</Text>
-           </Pressable>
+           </TouchableOpacity>
         </View>
 
         <View
           style={{
-            justifyContent: 'center',
-            alignItems: 'center'
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
           }}
         >
+         
           <Pressable 
             style={{
-              marginTop: 30
+              marginBottom: 10
+              
             }}
             onPress={() => console.log("HIIi")}
           >
@@ -221,5 +274,9 @@ const styles = StyleSheet.create({
   textSecondary: {
     ...FONTS.body3,
     color: COLORS.gray
+  },
+  errMsg: {
+    ...FONTS.body5,
+    color: COLORS.red
   }
 })
