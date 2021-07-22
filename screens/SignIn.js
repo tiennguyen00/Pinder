@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, 
-  Text, 
-  Image, 
-  ImageBackground, 
+import {
+  View,
+  Text,
+  Image,
+  ImageBackground,
   StyleSheet,
-  TextInput,
   Pressable,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { icons, images, COLORS, FONTS, SIZES } from '../constants';
+import Field from '../components/Field';
 
-export default function SignIn() {
+export default function SignIn({ navigation }) {
 
   const [userName, setUserName] = useState('');
-  const [password, setPassWord] = useState(''); 
+  const [password, setPassWord] = useState('');
   const [activeSignIn, setActiveSignIn] = useState(false);
   const [isValidUser, setisValidUser] = useState('');
   const [isValidPassword, setisValidPassword] = useState('');
 
-  useEffect(()=>{
-    if(userName && password) {
+  useEffect(() => {
+    if (userName && password) {
       setActiveSignIn(true);
     }
     else {
@@ -51,9 +53,9 @@ export default function SignIn() {
 
   const renderUsernamePassword = () => {
     const handleValidUser = (val) => {
-      if(val.length < 3) {
+      if (val.length < 3) {
         setisValidUser('*Username must be at least 3 characters')
-      }else if (!val.match(/^[a-zA-Z0-9]+$/)) {
+      } else if (!val.match(/^[a-zA-Z0-9]+$/)) {
         setisValidUser('*Only characters A-Z, a-z and 0-9')
       }
       else {
@@ -62,7 +64,7 @@ export default function SignIn() {
     }
 
     const hanldeValidPassword = (val) => {
-      if(val.length < 4) {
+      if (val.length < 4) {
         setisValidPassword('*Password must be at least 4 characters')
       }
       else {
@@ -75,95 +77,39 @@ export default function SignIn() {
         style={{
           flex: 1.1,
           justifyContent: "flex-start",
-          alignItems: "center",   
-          width: "100%" 
+          alignItems: "center",
+          width: "100%"
         }}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'transparent',
-            borderWidth: 1,
-            borderColor: COLORS.primaryLight,
-            height: 40,
-            borderTopWidth: 0,
-            borderRightWidth: 0,
-            borderLeftWidth: 0,
-            // marginBottom: 15
-          }}
-        >
-          <TextInput
-            placeholder="Username"
-            style={styles.input}
-            placeholderTextColor="#695599"
-            maxLength={12}
-            underlineColorAndroid="transparent"
-            onChangeText={text => setUserName(text)}
-            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-          />
-          <Image
-            source={icons.profile_signin}
-            resizeMode='center'
-            style={{
-              width: 24,
-              height: 24,
-              tintColor: COLORS.purpleLight,
-              height: '100%',
-              bottom: 0,
-            }}
-          />
-        </View>
-        {isValidUser=='' ? null :   
+        <Field
+          placeholder="Username"
+          placeholderTextColor="#695599"
+          maxLength={12}
+          underlineColorAndroid="transparent"
+          onChangeText={text => setUserName(text)}
+          onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+          source={icons.profile_signin}
+        />
+        {isValidUser == '' ? null :
           <Animatable.View animation="fadeInLeft" duration={800}>
             <Text style={styles.errMsg}>{isValidUser}</Text>
           </Animatable.View>
         }
 
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'transparent',
-            borderWidth: 1,
-            borderColor: COLORS.primaryLight,
-            height: 40,
-            borderTopWidth: 0,
-            borderRightWidth: 0,
-            borderLeftWidth: 0,
-            marginTop: 15
-          }}
-        >
-          <TextInput
-            placeholder="Password"
-            style={styles.input}
-            placeholderTextColor="#695599"
-            secureTextEntry={true}
-            maxLength={8}
-            onChangeText={text => setPassWord(text)}
-            onEndEditing={(e) => hanldeValidPassword(e.nativeEvent.text)}
-          />
-          <Image
-            source={icons.lock}
-            resizeMode='center'
-            style={{
-              width: 24,
-              height: 24,
-              tintColor: COLORS.purpleLight,
-              height: '100%',
-              bottom: 0,
-        
-            }}
-          />
-        </View>
-        {isValidPassword=='' ? null :   
+        <Field
+          placeholder="Password"
+          placeholderTextColor="#695599"
+          secureTextEntry={true}
+          maxLength={8}
+          onChangeText={text => setPassWord(text)}
+          onEndEditing={(e) => hanldeValidPassword(e.nativeEvent.text)}
+          source={icons.lock}
+        />
+        {isValidPassword == '' ? null :
           <Animatable.View animation="fadeInLeft" duration={800}>
             <Text style={styles.errMsg}>{isValidPassword}</Text>
           </Animatable.View>
         }
-        
 
         <View
           style={{
@@ -171,39 +117,38 @@ export default function SignIn() {
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginBottom: 15,
-            marginTop: 30
+            marginTop: 15
           }}
         >
-           <TouchableOpacity
+          <TouchableOpacity
             style={styles.button}
-            
-           >
-             <Text
+            onPress={() => navigation.navigate("SignUp")}
+          >
+            <Text
               style={styles.textActive}
-             >Sign up</Text>
-           </TouchableOpacity>
+            >Sign up</Text>
+          </TouchableOpacity>
 
-           <TouchableOpacity
+          <TouchableOpacity
             style={styles.button}
-           >
-             <Text
+          >
+            <Text
               style={(activeSignIn) ? styles.textActive : styles.text}
-             >Sign in</Text>
-           </TouchableOpacity>
+            >Sign in</Text>
+          </TouchableOpacity>
         </View>
 
         <View
           style={{
             flex: 1,
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-         
-          <Pressable 
+          <Pressable
             style={{
               marginBottom: 10
-              
+
             }}
             onPress={() => console.log("HIIi")}
           >
@@ -215,21 +160,23 @@ export default function SignIn() {
   }
 
   return (
-    <ImageBackground
-      style={styles.container}
-      source={images.background}
-    >
-      <View
-        style={{
-          flex: 1,
-          width: SIZES.width,
-          height: SIZES.height,
-        }}
+    <ScrollView>
+      <ImageBackground
+        style={styles.container}
+        source={images.background}
       >
-        {renderLogo()}
-        {renderUsernamePassword()}
-      </View>
-    </ImageBackground>
+        <View
+          style={{
+            flex: 1,
+            width: SIZES.width,
+            height: SIZES.height,
+          }}
+        >
+          {renderLogo()}
+          {renderUsernamePassword()}
+        </View>
+      </ImageBackground>
+    </ScrollView>
   )
 }
 
@@ -239,16 +186,6 @@ const styles = StyleSheet.create({
     width: null,
     height: null,
     paddingTop: 30
-  },
-  input: {
-    ...FONTS.body3,
-    borderWidth: 1,
-    height: 40,
-    padding: 5,
-    paddingLeft: 0,
-    color: COLORS.purpleLight,
-    borderWidth: 0,
-    width: '70%'
   },
   button: {
     alignItems: 'center',
