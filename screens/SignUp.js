@@ -42,22 +42,22 @@ export default function SignUp({ navigation }) {
   }
 
   const renderUsernamePassword = () => {
-    const translateY = new Animated.Value(150);
+    const translateY = new Animated.Value(170);
     const translateY1 = new Animated.Value(0);
     const opacity = new Animated.Value(0.3);
 
     useEffect(() => {
       Animated.timing(translateY, {
-        delay: 200,
+        delay: 0,
         duration: 1000,
-        toValue: 70,
+        toValue: 95,
         useNativeDriver: true
       }).start()
 
       Animated.timing(translateY1, {
-        delay: 200,
+        delay: 50,
         duration: 1000,
-        toValue: -80,
+        toValue: -50,
         useNativeDriver: true
       }).start()
 
