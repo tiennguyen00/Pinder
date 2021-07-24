@@ -36,7 +36,7 @@ export default function SignIn({ navigation }) {
         style={{
           justifyContent: 'flex-start',
           alignItems: 'flex-start',
-          flex: 2
+          flex: 2,
         }}
       >
         <Image
@@ -150,7 +150,9 @@ export default function SignIn({ navigation }) {
               marginBottom: 10
 
             }}
-            onPress={() => console.log("HIIi")}
+            onPress={() => navigation.navigate("ForgotPassword", {
+              userName: userName
+            })}
           >
             <Text style={styles.textSecondary}>Forgot Password?</Text>
           </Pressable>

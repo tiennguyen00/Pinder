@@ -48,6 +48,7 @@ export const SIZES = {
 export const FONTS = {
   logo: { fontFamily: "HoustanderDemo", fontSize: SIZES.logo },
   h3_bold: { fontFamily: "Quicksand-Bold", fontSize: (SIZES.h2+SIZES.h3)/2 },
+  h4: { fontFamily: "Quicksand-Bold", fontSize: SIZES.h4, lineHeight: 20 },
   body4: { fontFamily: "Quicksand-Light", fontSize: SIZES.body4, lineHeight: 22 },
   body3: { fontFamily: "Quicksand-Light", fontSize: SIZES.body3, lineHeight: 22 },
   body5: { fontFamily: "Quicksand-Bold", fontSize: SIZES.body5, lineHeight: 22 }
