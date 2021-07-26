@@ -7,11 +7,16 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { icons, images, COLORS, FONTS, SIZES } from '../constants';
 import Field from '../components/Field';
+import Modal1 from '../components/Modal1';
+
+import axios from 'axios';
+import { ipAdress } from '../config/ipAdress';
 
 export default function SignIn({ navigation }) {
 
@@ -29,6 +34,19 @@ export default function SignIn({ navigation }) {
       setActiveSignIn(false);
     }
   }, [userName, password]);
+
+  const handleSignIn = () => {
+    axios.post(`http://${ipAdress}:3000/send_user`, {
+      userName,
+      password
+    })
+    .then((res) => {
+      console.log("Response: ", res.status);
+    })
+    .catch((err) => {
+      console.log("Error: ", err)
+    })
+  }
 
   const renderLogo = () => {
     return (
@@ -131,6 +149,7 @@ export default function SignIn({ navigation }) {
 
           <TouchableOpacity
             style={styles.button}
+            onPress={() => handleSignIn()}
           >
             <Text
               style={(activeSignIn) ? styles.textActive : styles.text}
@@ -163,6 +182,8 @@ export default function SignIn({ navigation }) {
 
   return (
     <ScrollView>
+     
+
       <ImageBackground
         style={styles.container}
         source={images.background}

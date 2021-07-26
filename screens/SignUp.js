@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,13 @@ import {
 } from 'react-native';
 import { images, SIZES, icons, COLORS, FONTS } from '../constants';
 import * as Animatable from 'react-native-animatable';
-import { interpolate, Value } from 'react-native-reanimated';
+import { interpolate, useSharedValue, Value } from 'react-native-reanimated';
 import { useTransition } from 'react-native-redash'
 
 import Field from '../components/Field';
-import { useState } from 'react/cjs/react.development';
+import Modal1 from '../components/Modal1';
+import axios from 'axios';
+import { ipAdress } from '../config/ipAdress';
 
 export default function SignUp({ navigation }) {
 
@@ -27,6 +29,8 @@ export default function SignUp({ navigation }) {
 
   const [isValidUsername, setisValidUsername] = useState('');
   const [isValidPassword, setisValidPassword] = useState('');
+
+  const [visiblePop, setVisiblePop] = useState(false);
 
 
   const renderLogo = () => {
@@ -78,21 +82,21 @@ export default function SignUp({ navigation }) {
     }, [])
 
     useEffect(() => {
-      if(!isValidUsername && !isValidPassword && confirmPassword && userName) {
+      if (!isValidUsername && !isValidPassword && confirmPassword && userName) {
         setActiveSignIn(true);
       }
-      else 
+      else
         setActiveSignIn(false);
     }, [isValidUsername, isValidPassword, confirmPassword,])
 
     const handleConirmPassword = (val) => {
-      if(val!==password.slice(0, val.length)) 
+      if (val !== password.slice(0, val.length))
         setisValidPassword('*Password and confirm password don\'t match');
       else {
         setisValidPassword('');
       }
 
-      if(val===password)
+      if (val === password)
         setConfirmPassword(val);
       else
         setConfirmPassword('');
@@ -115,6 +119,25 @@ export default function SignUp({ navigation }) {
       else {
         setisValidPassword('');
       }
+    }
+
+    const handleSignUp = async () => {
+      if (activeSignIn) {
+        await axios.post(`http://${ipAdress}:3000/send_user`, {
+          userName,
+          password
+        })
+          .then((res) => {
+            console.log("Response: ", res.status);
+          })
+          .catch((err) => {
+            console.log("Error: ", err)
+          })
+
+        setVisiblePop(true)
+       
+      }
+
     }
 
     return (
@@ -153,7 +176,7 @@ export default function SignUp({ navigation }) {
           <Field
             placeholder="Username"
             placeholderTextColor="#695599"
-            maxLength={8}
+            maxLength={15}
             source={icons.profile_signin}
             onEndEditing={(e) => hanldeValidUsername(e.nativeEvent.text)}
             onChangeText={text => setUserName(text)}
@@ -189,58 +212,94 @@ export default function SignUp({ navigation }) {
 
 
           <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log("Press signup")}
+            style={styles.button}
+            onPress={() => handleSignUp()}
           >
-          <Text
-            style={(activeSignIn) ? styles.textActive : styles.text}
-          >Sign up</Text>
+            <Text
+              style={(activeSignIn) ? styles.textActive : styles.text}
+            >Sign up</Text>
           </TouchableOpacity>
 
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-          }}
-        >
-          <Pressable
+          <View
             style={{
-              marginBottom: 10
+              flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
             }}
-            onPress={() => { navigation.goBack(); }}
           >
-            <Text style={styles.textSecondary}>Back to SignIn</Text>
-          </Pressable>
-        </View>
+            <Pressable
+              style={{
+                marginBottom: 10
+              }}
+              onPress={() => { navigation.goBack(); }}
+            >
+              <Text style={styles.textSecondary}>Back to SignIn</Text>
+            </Pressable>
+          </View>
 
-      </Animated.View>
+        </Animated.View>
 
       </>
 
     )
 
-}
+  }
 
-return (
-  <ScrollView>
-    <ImageBackground
-      style={styles.container}
-      source={images.bg_signup}
-    >
-      <View
-        style={{
-          flex: 1,
-          width: SIZES.width,
-          height: SIZES.height,
-        }}
+  return (
+    <ScrollView>
+      <Modal1
+        visible={visiblePop}
       >
-        {renderLogo()}
-        {renderUsernamePassword()}
-      </View>
-    </ImageBackground>
-  </ScrollView>
-)
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => { setTimeout(() => setVisiblePop(false), 200) }}>
+              <Image
+                source={icons.close}
+                style={{
+                  width: 25,
+                  height: 25
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: 'center' }}>
+          <Image
+            source={icons.success}
+            style={{
+              height: 150,
+              width: 150,
+
+            }}
+          />
+        </View>
+        <Text
+          style={{
+            marginVertical: 20,
+            fontSize: 20,
+            textAlign: 'center'
+          }}
+        >
+          Congratulations registeration was successful
+        </Text>
+      </Modal1>
+      <ImageBackground
+        style={styles.container}
+        source={images.bg_signup}
+      >
+        <View
+          style={{
+            flex: 1,
+            width: SIZES.width,
+            height: SIZES.height,
+          }}
+        >
+          {renderLogo()}
+          {renderUsernamePassword()}
+        </View>
+      </ImageBackground>
+    </ScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -279,5 +338,11 @@ const styles = StyleSheet.create({
   errMsg: {
     ...FONTS.body5,
     color: COLORS.red
+  },
+  header: {
+    width: '100%',
+    height: 40,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start'
   }
 });
