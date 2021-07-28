@@ -135,7 +135,8 @@ export default function SignUp({ navigation }) {
           })
 
         setVisiblePop(true)
-       
+      }
+      else {
       }
 
     }
@@ -190,7 +191,7 @@ export default function SignUp({ navigation }) {
             placeholder="Password"
             placeholderTextColor="#695599"
             secureTextEntry={true}
-            maxLength={8}
+            maxLength={15}
             source={icons.lock}
             onChangeText={text => setPassword(text)}
             onEndEditing={(e) => hanldeValidPassword(e.nativeEvent.text)}

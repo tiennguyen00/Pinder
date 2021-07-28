@@ -2,12 +2,16 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+var ip = require("ip");
+console.log ( ip.address() );
+
 require('./User');
 
 app.use(bodyParser.json());
 
 const User = mongoose.model("User");
 const mongoURL = 'mongodb+srv://nothingCanStopMe2k:9vjYfi3oIugjeQCU@cluster0.hi4qb.mongodb.net/Pinder?retryWrites=true&w=majority'
+
 
 mongoose.connect(mongoURL, {
   useNewUrlParser: true,
@@ -27,7 +31,6 @@ app.get('/', (req, res) => {
 })
 
  app.post("/send_user", (req, res) => {
-   console.log('user', req.body);
    const user = new User({
     userName: req.body.userName,
     password: req.body.password
@@ -44,6 +47,36 @@ app.get('/', (req, res) => {
 
 })
 
+app.post("/login", async (req, res) => {
+  let user = await User.findOne({
+    userName: req.body.userName,
+    password: req.body.password
+  })
+
+  if(user){
+    console.log('usser: ', user);
+    res.send("Success")
+  }
+  else
+    res.send("Failed")
+})
+
+app.post("/forgotPassword", async (req, res) => {
+  let user = await User.findOne({
+    userName: req.body.userName
+  })
+  console.log(user);
+  if(user) {
+    res.send(user.password)
+  }
+  else {}
+    // res.send("Failed");
+})
+
 app.listen(3000, () => {
   console.log('server running');
 })
+
+// app.get("/getAllUser", async (req, res) => {
+//   User.find()
+// })

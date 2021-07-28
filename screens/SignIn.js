@@ -26,6 +26,9 @@ export default function SignIn({ navigation }) {
   const [isValidUser, setisValidUser] = useState('');
   const [isValidPassword, setisValidPassword] = useState('');
 
+  const [ visiblePop, setVisiblePop ] = useState(false);
+  const [ visiblePopWrong, setVisiblePopWrong ] = useState(false);
+
   useEffect(() => {
     if (userName && password) {
       setActiveSignIn(true);
@@ -35,17 +38,23 @@ export default function SignIn({ navigation }) {
     }
   }, [userName, password]);
 
-  const handleSignIn = () => {
-    axios.post(`http://${ipAdress}:3000/send_user`, {
-      userName,
-      password
-    })
-    .then((res) => {
-      console.log("Response: ", res.status);
-    })
-    .catch((err) => {
-      console.log("Error: ", err)
-    })
+  const handleSignIn = async () => {
+    if(activeSignIn) {
+      await axios.post(`http://${ipAdress}:3000/login`, {
+        userName,
+        password
+      })
+      .then((res) => {
+        if(res.data == 'Success') {
+          setVisiblePop(true)
+        }
+        else
+        setVisiblePopWrong(true);
+      })
+      .catch((err) => {
+        console.log("Error: ", err)
+      })
+    }
   }
 
   const renderLogo = () => {
@@ -118,7 +127,7 @@ export default function SignIn({ navigation }) {
           placeholder="Password"
           placeholderTextColor="#695599"
           secureTextEntry={true}
-          maxLength={8}
+          maxLength={15}
           onChangeText={text => setPassWord(text)}
           onEndEditing={(e) => hanldeValidPassword(e.nativeEvent.text)}
           source={icons.lock}
@@ -183,6 +192,77 @@ export default function SignIn({ navigation }) {
   return (
     <ScrollView>
      
+     <Modal1
+        visible={visiblePop}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => { setTimeout(() => setVisiblePop(false), 200) }}>
+              <Image
+                source={icons.close}
+                style={{
+                  width: 25,
+                  height: 25
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: 'center' }}>
+          <Image
+            source={icons.success}
+            style={{
+              height: 150,
+              width: 150,
+            }}
+          />
+        </View>
+        <Text
+          style={{
+            marginVertical: 20,
+            fontSize: 20,
+            textAlign: 'center'
+          }}
+        >
+          You are successfully logged in
+        </Text>
+      </Modal1>
+
+      <Modal1
+        visible={visiblePopWrong}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => { setTimeout(() => setVisiblePopWrong(false), 200) }}>
+              <Image
+                source={icons.close}
+                style={{
+                  width: 25,
+                  height: 25
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: 'center' }}>
+          <Image
+            source={icons.opps}
+            style={{
+              height: 150,
+              width: 150,
+            }}
+          />
+        </View>
+        <Text
+          style={{
+            marginVertical: 20,
+            fontSize: 20,
+            textAlign: 'center'
+          }}
+        >
+          Sorry but something wrong, Have you input correct userName or password!?
+        </Text>
+      </Modal1>
 
       <ImageBackground
         style={styles.container}
@@ -238,5 +318,11 @@ const styles = StyleSheet.create({
   errMsg: {
     ...FONTS.body5,
     color: COLORS.red
+  },
+  header: {
+    width: '100%',
+    height: 40,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start'
   }
 })

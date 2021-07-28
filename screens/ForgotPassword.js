@@ -10,14 +10,20 @@ import {
   Pressable
 } from 'react-native';
 import { images, COLORS, FONTS, icon, SIZES, icons } from '../constants';
-import Field from '../components/Field';
 import * as Animatable from 'react-native-animatable';
+import Field from '../components/Field';
+import Modal1 from '../components/Modal1';
+
+import axios from 'axios';
+import { ipAdress } from '../config/ipAdress';
 
 export default function ForgotPassword({ route, navigation }) {
   const [userName, setUserName] = useState('');
+  const [passwordReturn, setPasswordReturn] = useState('');
   const [ activeSendIt, setActiveSendIt ] = useState(false);
   const [isValidUser, setisValidUser] = useState('');
 
+  const [visiblePop, setVisiblePop] = useState(false);
 
 
   const renderLogo = () => {
@@ -58,6 +64,23 @@ export default function ForgotPassword({ route, navigation }) {
       setUserName(val);
     }
 
+    const handeleSendIt = async () => {
+      if(activeSendIt) {
+        await axios.post(`http://${ipAdress}:3000/forgotPassword`, {
+          userName,
+        })
+        .then((res) => {
+          if(res.data) {
+            setVisiblePop(true);
+            setPasswordReturn(res.data);
+          }
+        })
+        .catch((err) => {
+          console.log("Error: ", err)
+        })
+      }
+    }
+
     return (
       <View
         style={{
@@ -92,6 +115,7 @@ export default function ForgotPassword({ route, navigation }) {
         }
         <TouchableOpacity
           style={styles.button}
+          onPress={() => handeleSendIt()}
         >
           <Text style={(activeSendIt) ? styles.textActive : styles.text} >Send it</Text>
         </TouchableOpacity>
@@ -120,6 +144,42 @@ export default function ForgotPassword({ route, navigation }) {
 
   return (
     <ScrollView>
+       <Modal1
+        visible={visiblePop}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => { setTimeout(() => setVisiblePop(false), 200) }}>
+              <Image
+                source={icons.close}
+                style={{
+                  width: 25,
+                  height: 25
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: 'center' }}>
+          <Image
+            source={icons.cool}
+            style={{
+              height: 150,
+              width: 150,
+            }}
+          />
+        </View>
+        <Text
+          style={{
+            marginVertical: 20,
+            fontSize: 20,
+            textAlign: 'center'
+          }}
+        >
+          Your password is: {passwordReturn}
+        </Text>
+      </Modal1>
+
       <ImageBackground
         source={images.background}
         style={styles.container}
@@ -175,5 +235,11 @@ const styles = StyleSheet.create({
   errMsg: {
     ...FONTS.body5,
     color: COLORS.red
+  },
+  header: {
+    width: '100%',
+    height: 40,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start'
   }
 });
