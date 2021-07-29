@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { db } from '../server/firebase';
 import {
   View,
   Text,
@@ -66,18 +67,15 @@ export default function ForgotPassword({ route, navigation }) {
 
     const handeleSendIt = async () => {
       if(activeSendIt) {
-        await axios.post(`http://${ipAdress}:3000/forgotPassword`, {
-          userName,
-        })
-        .then((res) => {
-          if(res.data) {
-            setVisiblePop(true);
-            setPasswordReturn(res.data);
-          }
-        })
-        .catch((err) => {
-          console.log("Error: ", err)
-        })
+        await db.collection("users").get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if(doc.data().userName == userName) {
+              setPasswordReturn(doc.data().password);
+              setVisiblePop(true);
+              return;
+            }
+          });
+        });
       }
     }
 

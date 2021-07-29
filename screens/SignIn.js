@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { db } from '../server/firebase';
 import {
   View,
   Text,
@@ -40,20 +41,18 @@ export default function SignIn({ navigation }) {
 
   const handleSignIn = async () => {
     if(activeSignIn) {
-      await axios.post(`http://${ipAdress}:3000/login`, {
-        userName,
-        password
-      })
-      .then((res) => {
-        if(res.data == 'Success') {
-          setVisiblePop(true)
-        }
-        else
-        setVisiblePopWrong(true);
-      })
-      .catch((err) => {
-        console.log("Error: ", err)
-      })
+      await db.collection("users").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if(doc.data().userName == userName && doc.data().password == password) {
+            setVisiblePop(true);
+          }
+        });
+
+        if(visiblePop)
+          setVisiblePopWrong(true);
+      });
+      
+     
     }
   }
 

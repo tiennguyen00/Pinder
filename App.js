@@ -1,13 +1,12 @@
 import React from 'react';
 import { SignIn, ForgotPassword, SignUp } from './screens'
 
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, LogBox } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 
 const Stack = createStackNavigator();
-
 
 export default function App() {
   //Load font,

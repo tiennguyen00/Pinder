@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { db } from '../server/firebase';
 import {
   View,
   Text,
@@ -123,17 +124,16 @@ export default function SignUp({ navigation }) {
 
     const handleSignUp = async () => {
       if (activeSignIn) {
-        await axios.post(`http://${ipAdress}:3000/send_user`, {
+        await db.collection("users").add({
           userName,
           password
         })
-          .then((res) => {
-            console.log("Response: ", res.status);
-          })
-          .catch((err) => {
-            console.log("Error: ", err)
-          })
-
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
         setVisiblePop(true)
       }
       else {
