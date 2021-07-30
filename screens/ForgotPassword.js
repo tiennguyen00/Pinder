@@ -32,15 +32,15 @@ export default function ForgotPassword({ route, navigation }) {
       <View
         style={{
           justifyContent: 'flex-start',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           flex: 2,
         }}
       >
         <Image
           source={images.logo}
-          // resizeMode="contain"
+          resizeMode="contain"
           style={{
-            width: "100%",
+            width: "80%",
             height: "50%"
           }}
         />

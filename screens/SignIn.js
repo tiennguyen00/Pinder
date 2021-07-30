@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../server/firebase';
 import {
   View,
@@ -9,15 +9,12 @@ import {
   Pressable,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Animated
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { icons, images, COLORS, FONTS, SIZES } from '../constants';
 import Field from '../components/Field';
 import Modal1 from '../components/Modal1';
-
-import axios from 'axios';
-import { ipAdress } from '../config/ipAdress';
 
 export default function SignIn({ navigation }) {
 
@@ -30,6 +27,8 @@ export default function SignIn({ navigation }) {
   const [ visiblePop, setVisiblePop ] = useState(false);
   const [ visiblePopWrong, setVisiblePopWrong ] = useState(false);
 
+  const opacity = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     if (userName && password) {
       setActiveSignIn(true);
@@ -38,6 +37,8 @@ export default function SignIn({ navigation }) {
       setActiveSignIn(false);
     }
   }, [userName, password]);
+
+  
 
   const handleSignIn = async () => {
     if(activeSignIn) {
@@ -51,29 +52,39 @@ export default function SignIn({ navigation }) {
         if(visiblePop)
           setVisiblePopWrong(true);
       });
-      
      
     }
   }
 
   const renderLogo = () => {
+    useEffect(() => {
+      Animated.timing(opacity, {
+        delay: 0,
+        duration: 3000,
+        toValue: 1,
+        useNativeDriver: true
+      }).start()
+    }, [])
+
     return (
-      <View
+      <Animated.View
         style={{
           justifyContent: 'flex-start',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           flex: 2,
+          opacity: opacity
         }}
+
       >
         <Image
           source={images.logo}
-          // resizeMode="contain"
+          resizeMode="contain"
           style={{
-            width: "100%",
-            height: "50%"
+            width: "80%",
+            height: "50%",
           }}
         />
-      </View>
+      </Animated.View>
     )
   }
 
@@ -190,7 +201,6 @@ export default function SignIn({ navigation }) {
 
   return (
     <ScrollView>
-     
      <Modal1
         visible={visiblePop}
       >

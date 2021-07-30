@@ -38,17 +38,19 @@ export default function SignUp({ navigation }) {
     return (
       <View
         style={{
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-          flex: 1
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1,
+
         }}
       >
         <Image
           source={images.logo}
           // resizeMode="contain"
           style={{
-            width: "100%",
-            height: "100%"
+            width: "80%",
+            height: "100%",
+          
           }}
         />
       </View>
@@ -191,7 +193,7 @@ export default function SignUp({ navigation }) {
             placeholder="Password"
             placeholderTextColor="#695599"
             secureTextEntry={true}
-            maxLength={15}
+            maxLength={8}
             source={icons.lock}
             onChangeText={text => setPassword(text)}
             onEndEditing={(e) => hanldeValidPassword(e.nativeEvent.text)}
@@ -232,9 +234,9 @@ export default function SignUp({ navigation }) {
               style={{
                 marginBottom: 10
               }}
-              onPress={() => { navigation.goBack(); }}
+              onPress={() => { navigation.goBack() }}
             >
-              <Text style={styles.textSecondary}>Back to SignIn</Text>
+              <Text style={styles.textSecondary}>Already member?</Text>
             </Pressable>
           </View>
 

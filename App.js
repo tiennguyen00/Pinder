@@ -1,5 +1,5 @@
 import React from 'react';
-import { SignIn, ForgotPassword, SignUp } from './screens'
+import { SignIn, ForgotPassword, SignUp, Splash } from './screens'
 
 import { StyleSheet, LogBox } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -17,7 +17,7 @@ export default function App() {
     
     
   })
-  if(!loaded) {
+  if(!loaded) { 
     return null;
   }
   // =======================
@@ -28,8 +28,13 @@ export default function App() {
         screenOptions={{
           headerShown: false
         }}
-        initialRouteName={'SignIn'}
+        initialRouteName={'Splash'}
       >
+
+        <Stack.Screen
+          name="Splash"
+          component={Splash}
+        />
         <Stack.Screen
           name="SignIn"
           component={SignIn}
