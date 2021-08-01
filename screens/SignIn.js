@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { db } from '../server/firebase';
 import {
   View,
@@ -9,14 +10,20 @@ import {
   Pressable,
   TouchableOpacity,
   ScrollView,
-  Animated
+  Animated,
+  KeyboardAvoidingView
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { icons, images, COLORS, FONTS, SIZES } from '../constants';
 import Field from '../components/Field';
 import Modal1 from '../components/Modal1';
+import Loading from '../components/Loading';
+
+import { hideLoading, showLoading } from '../redux';
 
 export default function SignIn({ navigation }) {
+
+  const dispatch = useDispatch();
 
   const [userName, setUserName] = useState('');
   const [password, setPassWord] = useState('');
@@ -42,15 +49,21 @@ export default function SignIn({ navigation }) {
 
   const handleSignIn = async () => {
     if(activeSignIn) {
+      dispatch(showLoading());
       await db.collection("users").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           if(doc.data().userName == userName && doc.data().password == password) {
+            dispatch(hideLoading())
             setVisiblePop(true);
           }
         });
 
-        if(visiblePop)
-          setVisiblePopWrong(true);
+
+        if(!visiblePop)
+          {
+            dispatch(hideLoading());
+            setVisiblePopWrong(true);
+          }
       });
      
     }
@@ -201,6 +214,7 @@ export default function SignIn({ navigation }) {
 
   return (
     <ScrollView>
+
      <Modal1
         visible={visiblePop}
       >
@@ -277,6 +291,8 @@ export default function SignIn({ navigation }) {
         style={styles.container}
         source={images.background}
       >
+       
+        <Loading/>
         <View
           style={{
             flex: 1,
