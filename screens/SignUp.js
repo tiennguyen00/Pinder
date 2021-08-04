@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { db } from '../server/firebase';
 import {
   View,
@@ -20,6 +21,7 @@ import Field from '../components/Field';
 import Modal1 from '../components/Modal1';
 import axios from 'axios';
 import { ipAdress } from '../config/ipAdress';
+import { showLoading, hideLoading } from '../redux';
 
 export default function SignUp({ navigation }) {
 
@@ -32,6 +34,7 @@ export default function SignUp({ navigation }) {
   const [isValidPassword, setisValidPassword] = useState('');
 
   const [visiblePop, setVisiblePop] = useState(false);
+  const dispatch = useDispatch();
 
 
   const renderLogo = () => {
@@ -126,6 +129,7 @@ export default function SignUp({ navigation }) {
 
     const handleSignUp = async () => {
       if (activeSignIn) {
+        dispatch(showLoading());
         await db.collection("users").add({
           userName,
           password
@@ -136,6 +140,7 @@ export default function SignUp({ navigation }) {
         .catch((error) => {
           console.error("Error adding document: ", error);
         });
+        dispatch(hideLoading());
         setVisiblePop(true)
       }
       else {

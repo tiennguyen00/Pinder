@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { db } from '../server/firebase';
 import {
   View,
@@ -18,13 +19,19 @@ import Modal1 from '../components/Modal1';
 import axios from 'axios';
 import { ipAdress } from '../config/ipAdress';
 
+import { hideLoading, showLoading } from '../redux';
+
 export default function ForgotPassword({ route, navigation }) {
   const [userName, setUserName] = useState('');
   const [passwordReturn, setPasswordReturn] = useState('');
-  const [ activeSendIt, setActiveSendIt ] = useState(false);
+  const [activeSendIt, setActiveSendIt] = useState(false);
   const [isValidUser, setisValidUser] = useState('');
 
-  const [visiblePop, setVisiblePop] = useState(false);
+  const [visiblePop, setVisiblePop] = useState('init');
+  const [visiblePopWrong, setVisiblePopWrong] = useState(false);
+
+
+  const dispatch = useDispatch();
 
 
   const renderLogo = () => {
@@ -50,7 +57,44 @@ export default function ForgotPassword({ route, navigation }) {
 
   const renderUsernamePassword = () => {
 
-    const handleChangeText = (val) => {    
+    //===========Handle response after submit;
+    const [is, setIs] = useState();
+    useEffect(() => {
+      if (is == false) {
+        dispatch(hideLoading());
+        setVisiblePopWrong(true);
+      }
+      if (is == true) {
+        dispatch(hideLoading());
+        setVisiblePop(true);
+      }
+    }, [is]);
+    const handeleSendIt = async () => {
+      let result = 0;
+      if (activeSendIt) {
+        dispatch(showLoading());
+        await db.collection("users").get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.data().userName == userName) {
+              setPasswordReturn(doc.data().password);
+              result = 1;
+            }
+          });
+        });
+        if (!result) {
+          setIs(false)
+        }
+        else {
+          setIs(true)
+        }
+        setTimeout(() => {
+          setIs();
+        }, 1000)
+      }
+    }
+    //======================================
+
+    const handleChangeText = (val) => {
       if (val.length < 3) {
         setisValidUser('*Username must be at least 3 characters');
         setActiveSendIt(false);
@@ -65,20 +109,6 @@ export default function ForgotPassword({ route, navigation }) {
       setUserName(val);
     }
 
-    const handeleSendIt = async () => {
-      if(activeSendIt) {
-        await db.collection("users").get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            if(doc.data().userName == userName) {
-              setPasswordReturn(doc.data().password);
-              setVisiblePop(true);
-              return;
-            }
-          });
-        });
-      }
-    }
-
     return (
       <View
         style={{
@@ -89,15 +119,15 @@ export default function ForgotPassword({ route, navigation }) {
         }}
       >
         <Text
-          style={{ 
+          style={{
             ...FONTS.h4,
-            color: COLORS.orangeHeight, 
+            color: COLORS.orangeHeight,
             textAlign: 'center',
             width: "80%",
             marginBottom: 15
-        }}
+          }}
         >Enter your Username and I will send password for you!!</Text>
-        <Field 
+        <Field
           placeholder="Username"
           placeholderTextColor="#695599"
           maxLength={12}
@@ -127,7 +157,7 @@ export default function ForgotPassword({ route, navigation }) {
         >
           <Pressable
             style={{
-              marginBottom: 40      
+              marginBottom: 40
 
             }}
             onPress={() => navigation.goBack()}
@@ -142,7 +172,7 @@ export default function ForgotPassword({ route, navigation }) {
 
   return (
     <ScrollView>
-       <Modal1
+      <Modal1
         visible={visiblePop}
       >
         <View style={{ alignItems: 'center' }}>
@@ -175,6 +205,42 @@ export default function ForgotPassword({ route, navigation }) {
           }}
         >
           Your password is: {passwordReturn}
+        </Text>
+      </Modal1>
+
+      <Modal1
+        visible={visiblePopWrong}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => { setTimeout(() => setVisiblePopWrong(false), 200) }}>
+              <Image
+                source={icons.close}
+                style={{
+                  width: 25,
+                  height: 25
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: 'center' }}>
+          <Image
+            source={icons.sulk}
+            style={{
+              height: 150,
+              width: 150,
+            }}
+          />
+        </View>
+        <Text
+          style={{
+            marginVertical: 20,
+            fontSize: 20,
+            textAlign: 'center'
+          }}
+        >
+          userName is not correct !!
         </Text>
       </Modal1>
 

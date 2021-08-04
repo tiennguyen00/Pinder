@@ -17,7 +17,6 @@ import * as Animatable from 'react-native-animatable';
 import { icons, images, COLORS, FONTS, SIZES } from '../constants';
 import Field from '../components/Field';
 import Modal1 from '../components/Modal1';
-import Loading from '../components/Loading';
 
 import { hideLoading, showLoading } from '../redux';
 
@@ -31,8 +30,8 @@ export default function SignIn({ navigation }) {
   const [isValidUser, setisValidUser] = useState('');
   const [isValidPassword, setisValidPassword] = useState('');
 
-  const [ visiblePop, setVisiblePop ] = useState(false);
-  const [ visiblePopWrong, setVisiblePopWrong ] = useState(false);
+  const [visiblePop, setVisiblePop] = useState(false);
+  const [visiblePopWrong, setVisiblePopWrong] = useState(false);
 
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -45,29 +44,41 @@ export default function SignIn({ navigation }) {
     }
   }, [userName, password]);
 
-  
-
+  //===========Handle response after submit;
+  const [is, setIs] = useState();
+  useEffect(() => {
+    if (is == false) {
+      dispatch(hideLoading());
+      setVisiblePopWrong(true);
+    }
+    if (is == true) {
+      dispatch(hideLoading());
+      setVisiblePop(true);
+    }
+  }, [is]);
   const handleSignIn = async () => {
-    if(activeSignIn) {
+    if (activeSignIn) {
       dispatch(showLoading());
+      let result = 0;
       await db.collection("users").get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if(doc.data().userName == userName && doc.data().password == password) {
-            dispatch(hideLoading())
-            setVisiblePop(true);
+          if (doc.data().userName == userName && doc.data().password == password) {
+            result = 1;
           }
         });
-
-
-        if(!visiblePop)
-          {
-            dispatch(hideLoading());
-            setVisiblePopWrong(true);
-          }
+        if (!result) {
+          setIs(false)
+        }
+        else {
+          setIs(true)
+        }
+        setTimeout(() => {
+          setIs();
+        }, 1000)
       });
-     
     }
   }
+//=====================================
 
   const renderLogo = () => {
     useEffect(() => {
@@ -215,7 +226,7 @@ export default function SignIn({ navigation }) {
   return (
     <ScrollView>
 
-     <Modal1
+      <Modal1
         visible={visiblePop}
       >
         <View style={{ alignItems: 'center' }}>
@@ -291,8 +302,6 @@ export default function SignIn({ navigation }) {
         style={styles.container}
         source={images.background}
       >
-       
-        <Loading/>
         <View
           style={{
             flex: 1,

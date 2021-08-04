@@ -7,7 +7,8 @@ const confirm_lock = require("../assets/icons/confirm_lock.png");
 const close = require("../assets/icons/close.png");
 const success = require("../assets/icons/success.png");
 const opps = require("../assets/icons/opps.png");
-const cool = require('../assets/icons/cool.png')
+const cool = require('../assets/icons/cool.png');
+const sulk = require("../assets/icons/sulk.png");
 
 export default {
   shopping,
@@ -19,5 +20,6 @@ export default {
   close,
   success,
   opps,
-  cool
+  cool,
+  sulk
 }
