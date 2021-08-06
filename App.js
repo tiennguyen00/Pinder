@@ -1,5 +1,5 @@
 import React from 'react';
-import { SignIn, ForgotPassword, SignUp, Splash } from './screens';
+import { SignIn, ForgotPassword, SignUp, Splash, Home } from './screens';
 import Loading from './components/Loading';
 import { Provider } from 'react-redux';
 import store from './redux/store';
@@ -25,7 +25,7 @@ export default function App() {
     return null;
   }
   // =======================
-
+  
   return (
     <Provider store={store} >
       <Loading />
@@ -53,6 +53,10 @@ export default function App() {
             name="SignUp"
             component={SignUp}
           />
+          <Stack.Screen
+            name="Home"
+            component={Home}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
@@ -63,3 +67,4 @@ const styles = StyleSheet.create({
   screen: {
   },
 });
+

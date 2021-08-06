@@ -1,7 +1,9 @@
 const shopping = require("../assets/icons/shopping.png");
+const rank = require ("../assets/icons/rank.png")
 const love = require("../assets/icons/love.png");
 const entertaiment = require("../assets/icons/entertaiment.png");
 const profile_signin = require("../assets/icons/profile(login).png");
+const profile = require("../assets/icons/profile.png")
 const lock = require("../assets/icons/lock.png");
 const confirm_lock = require("../assets/icons/confirm_lock.png");
 const close = require("../assets/icons/close.png");
@@ -9,6 +11,7 @@ const success = require("../assets/icons/success.png");
 const opps = require("../assets/icons/opps.png");
 const cool = require('../assets/icons/cool.png');
 const sulk = require("../assets/icons/sulk.png");
+const home = require("../assets/icons/home.png");
 
 export default {
   shopping,
@@ -21,5 +24,8 @@ export default {
   success,
   opps,
   cool,
-  sulk
+  sulk,
+  profile,
+  rank,
+  home
 }

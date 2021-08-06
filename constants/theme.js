@@ -22,7 +22,8 @@ export const COLORS = {
   greenHeight: "#17C74A",
   blueLight2: "#7EA6FF",
   blueHeight2: "#4B75FF",
-  gray: "#999"
+  gray: "#999",
+  transparent: 'transparent'
 }
 
 // SIZES

@@ -44,42 +44,6 @@ export default function SignIn({ navigation }) {
     }
   }, [userName, password]);
 
-  //===========Handle response after submit;
-  const [is, setIs] = useState();
-  useEffect(() => {
-    if (is == false) {
-      dispatch(hideLoading());
-      setVisiblePopWrong(true);
-    }
-    if (is == true) {
-      dispatch(hideLoading());
-      setVisiblePop(true);
-    }
-  }, [is]);
-  const handleSignIn = async () => {
-    if (activeSignIn) {
-      dispatch(showLoading());
-      let result = 0;
-      await db.collection("users").get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          if (doc.data().userName == userName && doc.data().password == password) {
-            result = 1;
-          }
-        });
-        if (!result) {
-          setIs(false)
-        }
-        else {
-          setIs(true)
-        }
-        setTimeout(() => {
-          setIs();
-        }, 1000)
-      });
-    }
-  }
-//=====================================
-
   const renderLogo = () => {
     useEffect(() => {
       Animated.timing(opacity, {
@@ -113,6 +77,46 @@ export default function SignIn({ navigation }) {
   }
 
   const renderUsernamePassword = () => {
+    //===========Handle response after submit;
+    const [is, setIs] = useState();
+    useEffect(() => {
+      if (is == false) {
+        dispatch(hideLoading());
+        setVisiblePopWrong(true);
+      }
+      if (is == true) {
+        setVisiblePop(true);
+        dispatch(hideLoading());
+        navigation.navigate('Home', {
+          userName,
+          password
+        });
+      }
+    }, [is]);
+    const handleSignIn = async () => {
+      if (activeSignIn) {
+        dispatch(showLoading());
+        let result = 0;
+        await db.collection("users").get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.data().userName == userName && doc.data().password == password) {
+              result = 1;
+            }
+          });
+          if (!result) {
+            setIs(false)
+          }
+          else {
+            setIs(true)
+          }
+          setTimeout(() => {
+            setIs();
+          }, 1000)
+        });
+      }
+    }
+    //=====================================
+
     const handleValidUser = (val) => {
       if (val.length < 3) {
         setisValidUser('*Username must be at least 3 characters')
@@ -225,42 +229,6 @@ export default function SignIn({ navigation }) {
 
   return (
     <ScrollView>
-
-      <Modal1
-        visible={visiblePop}
-      >
-        <View style={{ alignItems: 'center' }}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => { setTimeout(() => setVisiblePop(false), 200) }}>
-              <Image
-                source={icons.close}
-                style={{
-                  width: 25,
-                  height: 25
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{ alignItems: 'center' }}>
-          <Image
-            source={icons.success}
-            style={{
-              height: 150,
-              width: 150,
-            }}
-          />
-        </View>
-        <Text
-          style={{
-            marginVertical: 20,
-            fontSize: 20,
-            textAlign: 'center'
-          }}
-        >
-          You are successfully logged in
-        </Text>
-      </Modal1>
 
       <Modal1
         visible={visiblePopWrong}

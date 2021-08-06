@@ -1,11 +1,16 @@
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 import loadingReducer from "./loading/loadingReducer";
+import tabReducer from "./tab/tabReducer";
 
 const rootReducers = combineReducers({
-  loadingReducer
+  loadingReducer,
+  tabReducer
 })
 
 const store = createStore(
-  rootReducers
+  rootReducers,
+  applyMiddleware(thunk)
 )
+console.log("STORE: ", store.getState());
 export default store;
