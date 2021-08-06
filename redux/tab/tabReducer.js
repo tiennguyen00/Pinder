@@ -1,7 +1,7 @@
 import * as tabActionTypes from './tabActions';
 
 const initialState = {
-  selectedTab: ""
+  selectedTab: "Home"
 }
 
 const tabReducer = (state = initialState, action) => {
