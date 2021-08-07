@@ -23,7 +23,8 @@ export const COLORS = {
   blueLight2: "#7EA6FF",
   blueHeight2: "#4B75FF",
   gray: "#999",
-  transparent: 'transparent'
+  transparent: 'transparent',
+  lighGray: '#ddd'
 }
 
 // SIZES
@@ -48,7 +49,9 @@ export const SIZES = {
 // FONTS
 export const FONTS = {
   logo: { fontFamily: "HoustanderDemo", fontSize: SIZES.logo },
+  h1_bold: { fontFamily: "Quicksand-Bold", fontSize: SIZES.h1, lineHeight: 32 },
   h3_bold: { fontFamily: "Quicksand-Bold", fontSize: (SIZES.h2+SIZES.h3)/2 },
+  h3: { fontFamily: "Quicksand-Light", fontSize: SIZES.h3 },
   h4: { fontFamily: "Quicksand-Bold", fontSize: SIZES.h4, lineHeight: 20 },
   body4: { fontFamily: "Quicksand-Light", fontSize: SIZES.body4, lineHeight: 22 },
   body3: { fontFamily: "Quicksand-Light", fontSize: SIZES.body3, lineHeight: 22 },

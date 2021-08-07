@@ -26,6 +26,7 @@ export default function SignIn({ navigation }) {
 
   const [userName, setUserName] = useState('');
   const [password, setPassWord] = useState('');
+  const [userId, setUserId] = useState('');
   const [activeSignIn, setActiveSignIn] = useState(false);
   const [isValidUser, setisValidUser] = useState('');
   const [isValidPassword, setisValidPassword] = useState('');
@@ -88,6 +89,7 @@ export default function SignIn({ navigation }) {
         setVisiblePop(true);
         dispatch(hideLoading());
         navigation.navigate('Home', {
+          userId,
           userName,
           password
         });
@@ -100,6 +102,7 @@ export default function SignIn({ navigation }) {
         await db.collection("users").get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             if (doc.data().userName == userName && doc.data().password == password) {
+              setUserId(doc.id);
               result = 1;
             }
           });

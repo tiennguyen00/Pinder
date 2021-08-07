@@ -8,6 +8,8 @@ const bg_signup1 = require("../assets/images/bg_signup1.png")
 //For loading
 const loading = require("../assets/images/loading.json")
 const splash = require("../assets/images/splash.json")
+//For profile_picture
+const profile_picture = require("../assets/images/profile_picture.jpg")
 
 export default {
   background,
@@ -15,5 +17,6 @@ export default {
   bg_signup1,
   bg_signup,
   loading,
-  splash
+  splash,
+  profile_picture
 }

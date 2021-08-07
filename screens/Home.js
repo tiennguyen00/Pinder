@@ -8,7 +8,7 @@ import { Rank, Love, Profile, HomeUI } from './Main';
 import { setSelectedTabSuccess, setSelectedTab } from '../redux/tab/tabActions';
 
 
-export default function Home() {
+export default function Home({ route }) {
   const dispatch = useDispatch();
   const selectedTab = useSelector(state =>  state.tabReducer.selectedTab);
   const flatListRef = useRef();
@@ -157,7 +157,7 @@ export default function Home() {
                 width: SIZES.width
               }}
             >
-              {item.label == constant.screens.home && <HomeUI/>}
+              {item.label == constant.screens.home && <HomeUI userDetail={route.params}/>}
               {item.label == constant.screens.rank && <Rank/>}
               {item.label == constant.screens.profile && <Profile/>}
               {item.label == constant.screens.love && <Love/>}
@@ -186,7 +186,7 @@ export default function Home() {
             right: 0,
             height: '100%',
             borderTopLeftRadius: 15,
-            borderTopRightRadius: 15
+            borderTopRightRadius: 15,
           }}
         />
         {/* Tabs */}
@@ -194,7 +194,7 @@ export default function Home() {
           style={{
             flex: 1,
             flexDirection: 'row',
-            paddingHorizontal: 20,
+            paddingHorizontal: 5,
             paddingVertical: 10,
             paddingBottom: 10,
             borderTopLeftRadius: 15,

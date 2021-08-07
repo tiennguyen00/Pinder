@@ -12,6 +12,7 @@ const opps = require("../assets/icons/opps.png");
 const cool = require('../assets/icons/cool.png');
 const sulk = require("../assets/icons/sulk.png");
 const home = require("../assets/icons/home.png");
+const search = require("../assets/icons/search.png");
 
 export default {
   shopping,
@@ -27,5 +28,6 @@ export default {
   sulk,
   profile,
   rank,
-  home
+  home,
+  search
 }
