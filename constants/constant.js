@@ -25,8 +25,19 @@ const bottom_tabs = [
 ]
 
 
-const ratings = [
- 
+const data = [
+  {
+    id: 0,
+    label: "Dogs"
+  },
+  {
+    id: 1,
+    label: "Cats"
+  },
+  {
+    id: 2,
+    label: "Others"
+  }
 ]
 
 const tags = [
@@ -36,4 +47,5 @@ const tags = [
 export default {
   screens,
   bottom_tabs,
+  data
 }

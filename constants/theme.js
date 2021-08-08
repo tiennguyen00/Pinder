@@ -8,7 +8,7 @@ export const COLORS = {
   
   white: "#ccc",
   black: "#000",
-  red: "#f00",
+  red: "rgba(255,0,0,0.5)",
 
   purpleLight: "#AC89FF",
   purpleHeight: "#8057FF",

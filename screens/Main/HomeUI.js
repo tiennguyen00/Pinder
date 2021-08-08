@@ -1,14 +1,23 @@
-import { auto } from 'async'
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { 
   View, 
   Text,
   TextInput,
-  Image
+  Image,
+  ScrollView,
+  CardItem
 }from 'react-native'
 import { COLORS, FONTS, icons, SIZES, images } from '../../constants'
+import MasonryList from '@react-native-seoul/masonry-list';
+import { getNewPins } from '../../server/pixabay';
+import Card from '../../components/Card';
+import { showLoading, hideLoading } from '../../redux/loading/loaddingActions';
+import { func } from 'prop-types';
 
 export default function HomeUI(props) {
+
+
   const renderHeader = () => {
     return (
       <View
@@ -17,7 +26,8 @@ export default function HomeUI(props) {
           backgroundColor: COLORS.white,
           borderBottomLeftRadius: 40,
           paddingHorizontal: 30,
-          paddingTop: 50
+          paddingTop: 20,
+          zIndex: 100
         }}
       >
         <View
@@ -47,9 +57,9 @@ export default function HomeUI(props) {
             paddingRight: 50,
             paddingLeft: 10,
             backgroundColor: COLORS.gray,
-            marginTop: "10%",
+            marginTop: "5%",
             height: 50,
-            borderRadius: 10
+            borderRadius: 10, 
           }}
         >
           <Image 
@@ -79,14 +89,49 @@ export default function HomeUI(props) {
     )
   }
   const renderContent = () => {
+    const dispatch = useDispatch();
+    const [dataFromApi, setDataFromApi] = useState([]);
+
+    useEffect(() => {
+      async function fetchData() {
+      dispatch(showLoading());
+      await getNewPins().then((value) => {
+        setDataFromApi(value);
+      });
+      dispatch(hideLoading());
+    }
+    fetchData();
+    }, [])
+
+    const renderItem = (item) => {
+      return (
+        <Card key={item.item.id.toString()} item={item.item}/>
+      )
+    }
+
     return (
       <View
         style={{
-          flex: 4,
-          paddingTop: 30
+          flex: 5,
+          paddingTop: 30,
         }}
       >
-        <Text>Content</Text>
+        <ScrollView
+          style={{
+            width: '100%',
+          }}
+        >
+          <MasonryList
+            style={{alignSelf: 'stretch'}}
+            contentContainerStyle={{
+                paddingHorizontal: 10,
+                alignSelf: 'stretch',
+              }}
+            numColumns={2}
+            data={dataFromApi}
+            renderItem={renderItem}
+          />
+        </ScrollView>
       </View>
     )
   }
