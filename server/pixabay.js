@@ -4,7 +4,7 @@ let pixabayApi = "https://pixabay.com/api/";
 const pixabay = axios.create({
   baseURL: pixabayApi,
   header: {
-    "X-RateLimit-Limit": 500,
+    "X-RateLimit-Limit": 1000,
   },
 });
 
