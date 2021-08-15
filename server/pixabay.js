@@ -8,8 +8,7 @@ const pixabay = axios.create({
   },
 });
 
-const resultFromApi = async (result) => {
-  let resultsFromUnsplash = [];
+const getFromApi = async (result) => {
   let resultsFromPixabay = [];
 
   try {
@@ -17,18 +16,20 @@ const resultFromApi = async (result) => {
       params: {
         key: "18049379-13927042d3999d4d59dea6f1d",
         q: result,
-        per_page: 10,
+        per_page: 30,
       },
     });
 
     const dataFromPixabay = getImgPixabay.data.hits.map((img) => {
       return {
+        id: img.id,
         urls: img.webformatURL,
-        downloads: img.downloads,
         likes: img.likes,
-        tags: img.tags,
         user: img.user,
         views: img.views,
+        imageHeight: img.imageHeight,
+        imageWidth: img.imageWidth,
+        userImageURL: img.userImageURL
       };
     });
 
@@ -37,7 +38,7 @@ const resultFromApi = async (result) => {
     console.log(err.message);
   }
 
-  return [...resultsFromPixabay, ...resultsFromUnsplash];
+  return [...resultsFromPixabay];
 };
 
 const getNewPins = async () => {
@@ -76,4 +77,4 @@ const getNewPins = async () => {
   return pinData;
 };
 
-export { getNewPins };
+export { getNewPins, getFromApi };

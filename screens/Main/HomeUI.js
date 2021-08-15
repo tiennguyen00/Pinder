@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
   Text,
@@ -10,21 +10,24 @@ import {
 } from 'react-native'
 import { COLORS, FONTS, icons, SIZES, images } from '../../constants'
 import MasonryList from '@react-native-seoul/masonry-list';
-import { getNewPins } from '../../server/pixabay';
+import { getNewPins, getFromApi } from '../../server/pixabay';
 import { showLoading, hideLoading } from '../../redux/loading/loaddingActions';
+import { uploadImage } from '../../redux';
 
 const HEADER_MAX = 300;
+const height1 = 150, height2 = 280;
 
 export default function HomeUI(props) {
   const dispatch = useDispatch(); 
-  const [dataFromApi, setDataFromApi] = useState([]);
+  const dataFromApi = useSelector(state => state.pinsReducer.data);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const marginVerAnimation = useRef(new Animated.Value(10)).current;
 
   useEffect(() => {
     async function fetchData() {
       dispatch(showLoading());
       await getNewPins().then((value) => {
-        setDataFromApi(value);
+        dispatch(uploadImage(value));
       });
       dispatch(hideLoading());
     }
@@ -33,6 +36,31 @@ export default function HomeUI(props) {
 
 
   const renderHeader = () => {
+    const handleSearch = async (e) => {
+      let newPins = [];
+      await getFromApi(e).then((res) => {
+        let results = res.map((img) => {
+          return { 
+            urls: img.urls,
+            id: img.id,
+            likes: img.likes,
+            user: img.user,
+            views: img.views, 
+            imageHeight: img.imageHeight,
+            imageWidth: img.imageWidth,
+            userImageURL: img.userImageURL
+          };
+        });
+
+        newPins = [...results];
+        newPins.sort(() => {
+          return 0.5 - Math.random();
+        });
+      });
+
+      dispatch(uploadImage(newPins));
+    }
+
     return (
       <Animated.View
         style={{
@@ -121,6 +149,7 @@ export default function HomeUI(props) {
           <TextInput
             placeholder="Search something"
             placeholderTextColor="#777"
+            onEndEditing={(e) => handleSearch(e.nativeEvent.text)}
             style={{
               borderWidth: 0,
               color: COLORS.primaryHeight,
@@ -137,22 +166,22 @@ export default function HomeUI(props) {
 
 
     const Card = (props) => {
-      const { item } = props;
+      const { item, index } = props;
       const randomBool = useMemo(() =>  item.id%2==0, [])
-
+      // console.log(props.key);
+   
       return (
         <Animated.View
-          key={item.id}
+          key={index}
           style={{
             flex: 1,
             marginHorizontal: 5,
-            height: randomBool ? 150 : 280,
-            marginVertical: 10
-            // scrollY.interpolate({
-            //     inputRange: [0, 1000],
-            //     outputRange: [10, 50],
-            //     extrapolate: 'clamp'
-            //   })
+            height: randomBool ? height1 : height2,
+            marginVertical: scrollY.interpolate({
+              inputRange: [0, (index+1)*height2, (index+1)*height2 + height1],
+              outputRange: [10, 30, 10],
+              extrapolate: 'clamp'
+            })
           }}
         >
           <Image
@@ -182,7 +211,6 @@ export default function HomeUI(props) {
 
             <View
               style={{
-
                 marginBottom: 10,
                 marginTop: 5,
                 backgroundColor: 'rgba(255, 255, 255, 0.5)',
@@ -223,6 +251,7 @@ export default function HomeUI(props) {
           style={{
             width: '100%',
           }}
+          contentContainerStyle={{ paddingBottom: 60 }}
           scrollEventThrottle={16}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: scrollY}}}],
@@ -231,14 +260,13 @@ export default function HomeUI(props) {
         >
           <MasonryList
             style={{ alignSelf: 'stretch' }}
-            keyExtractor={index => console.log(index)}
             contentContainerStyle={{
               paddingHorizontal: 10,
               alignSelf: 'stretch',
             }}
             numColumns={2}
             data={dataFromApi}
-            renderItem={(item) => <Card key={item.item.id} item={item.item} />}
+            renderItem={({ item, i }) => <Card index={i} key={item.id}  item={item} />}
           />
         </Animated.ScrollView>
       </View>
